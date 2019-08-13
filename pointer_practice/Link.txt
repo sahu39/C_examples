@@ -1,0 +1,6 @@
+https://www.geeksforgeeks.org/pointer-array-array-pointer/
+
+
+How to pass a 2D array as a parameter in C ?:
+--------------------------------------------
+odes.com/pass-2d-array-parameter-c-2/
