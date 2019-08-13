@@ -1,0 +1,6 @@
+c compilataion steps:
+---------------------------
+1.preprocessor
+2.compiler
+3.assembler
+4.linker
