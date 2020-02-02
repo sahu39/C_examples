@@ -1,0 +1,5 @@
+https://www.geeksforgeeks.org/check-number-positive-negative-zero-using-bit-operators/
+
+https://aticleworld.com/interview-questions-on-bitwise-operators-in-c/
+
+https://www.youtube.com/watch?v=HWTnwZQmhpc
