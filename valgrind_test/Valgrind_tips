@@ -1,0 +1,270 @@
+link:
+-----
+http://valgrind.org/docs/manual/quick-start.html
+https://www.cprogramming.com/debugging/valgrind.html---->This link is very important
+https://stackoverflow.com/questions/29323815/how-to-run-valgrind-with-basic-c-example/29323834
+android valgrind links:
+-----------------------
+https://source.android.com/devices/tech/debug/valgrind
+
+-used to enable extenssive checking of heap memory allocations and access.
+-When detects a problem gives immidiate direct information so that it can be easily find and we can fix the problem.
+-reports less deadly memory issues e.g: Memory Leaks, allocating heap memory and forgetting to free it.
+-Valgrind runs on binary executable only.
+
+What can Valgrind do?:
+----------------------
+-Valgrind can also find the use of invalid heap memory using the memcheck tool.
+-Another type of operation that Valgrind will detect is the use of an uninitialized value in a conditional statement.
+-if you call free twice on the same pointer value, Valgrind will detect this for you.
+what can't valgrind do?:
+-------------------------
+-valgrind check memory violations in heap area only. Valgrind can't check any memory violations in the stack area.
+
+-valgrind command example:
+---------------------------
+rakesh@rakesh-desktop:~/C_examples/valgrind_test$ valgrind --tool=memcheck ./valgrind_test_1
+==5992== Memcheck, a memory error detector
+==5992== Copyright (C) 2002-2015, and GNU GPL'd, by Julian Seward et al.
+==5992== Using Valgrind-3.12.0 and LibVEX; rerun with -h for copyright info
+==5992== Command: ./valgrind_test_1
+==5992== 
+==5992== Invalid write of size 4
+==5992==    at 0x40054B: f (in /home/rakesh/C_examples/valgrind_test/valgrind_test_1)
+==5992==    by 0x40055B: main (in /home/rakesh/C_examples/valgrind_test/valgrind_test_1)
+==5992==  Address 0x51fb068 is 0 bytes after a block of size 40 alloc'd
+==5992==    at 0x4C2ABE3: malloc (vg_replace_malloc.c:299)
+==5992==    by 0x40053E: f (in /home/rakesh/C_examples/valgrind_test/valgrind_test_1)
+==5992==    by 0x40055B: main (in /home/rakesh/C_examples/valgrind_test/valgrind_test_1)
+==5992== 
+==5992== 
+==5992== HEAP SUMMARY:
+==5992==     in use at exit: 40 bytes in 1 blocks
+==5992==   total heap usage: 1 allocs, 0 frees, 40 bytes allocated
+==5992== 
+==5992== LEAK SUMMARY:
+==5992==    definitely lost: 40 bytes in 1 blocks
+==5992==    indirectly lost: 0 bytes in 0 blocks
+==5992==      possibly lost: 0 bytes in 0 blocks
+==5992==    still reachable: 0 bytes in 0 blocks
+==5992==         suppressed: 0 bytes in 0 blocks
+==5992== Rerun with --leak-check=full to see details of leaked memory
+==5992== 
+==5992== For counts of detected and suppressed errors, rerun with: -v
+==5992== ERROR SUMMARY: 1 errors from 1 contexts (suppressed: 0 from 0)
+-----------------------------------------------------------------------
+rakesh@rakesh-desktop:~/C_examples/valgrind_test$ valgrind --tool=memcheck --leak-check=yes ./valgrind_test_1 
+==6095== Memcheck, a memory error detector
+==6095== Copyright (C) 2002-2015, and GNU GPL'd, by Julian Seward et al.
+==6095== Using Valgrind-3.12.0 and LibVEX; rerun with -h for copyright info
+==6095== Command: ./valgrind_test_1
+==6095== 
+==6095== Invalid write of size 4
+==6095==    at 0x40054B: f (in /home/rakesh/C_examples/valgrind_test/valgrind_test_1)
+==6095==    by 0x40055B: main (in /home/rakesh/C_examples/valgrind_test/valgrind_test_1)
+==6095==  Address 0x51fb068 is 0 bytes after a block of size 40 alloc'd
+==6095==    at 0x4C2ABE3: malloc (vg_replace_malloc.c:299)
+==6095==    by 0x40053E: f (in /home/rakesh/C_examples/valgrind_test/valgrind_test_1)
+==6095==    by 0x40055B: main (in /home/rakesh/C_examples/valgrind_test/valgrind_test_1)
+==6095== 
+==6095== 
+==6095== HEAP SUMMARY:
+==6095==     in use at exit: 40 bytes in 1 blocks
+==6095==   total heap usage: 1 allocs, 0 frees, 40 bytes allocated
+==6095== 
+==6095== 40 bytes in 1 blocks are definitely lost in loss record 1 of 1
+==6095==    at 0x4C2ABE3: malloc (vg_replace_malloc.c:299)
+==6095==    by 0x40053E: f (in /home/rakesh/C_examples/valgrind_test/valgrind_test_1)
+==6095==    by 0x40055B: main (in /home/rakesh/C_examples/valgrind_test/valgrind_test_1)
+==6095== 
+==6095== LEAK SUMMARY:
+==6095==    definitely lost: 40 bytes in 1 blocks
+==6095==    indirectly lost: 0 bytes in 0 blocks
+==6095==      possibly lost: 0 bytes in 0 blocks
+==6095==    still reachable: 0 bytes in 0 blocks
+==6095==         suppressed: 0 bytes in 0 blocks
+==6095== 
+==6095== For counts of detected and suppressed errors, rerun with: -v
+==6095== ERROR SUMMARY: 2 errors from 2 contexts (suppressed: 0 from 0)
+-----------------------------------------------------------------------------
+ 					Usage1:	  valgrind_test_1.c--->Memory Leak Check
+                                                  ------------------
+-Compile valgrind_test_2.c with -g option to enable debugging option.
+--g option of gcc, which adds debugging symbols. we can find out which line contains the malloc function which needs to call the free()
+ function.
+rakesh@rakesh-desktop:~/C_examples/valgrind_test$ cat valgrind_test_1.c 
+#include<stdlib.h>
+#include<stdio.h>
+void f(void)
+{
+    int *x = (int *)malloc(10*sizeof(int));
+    x[10]=0;                            //problem 1: heap block overrun
+
+}                                       //problem 2: memory leak --x not freed
+
+int main()
+{
+    f();
+    return 0;
+}
+
+rakesh@rakesh-desktop:~/C_examples/valgrind_test$ gcc -g valgrind_test_1.c -o valgrind_test_1
+rakesh@rakesh-desktop:~/C_examples/valgrind_test$ valgrind --tool=memcheck --leak-check=yes ./valgrind_test_1 
+==6496== Memcheck, a memory error detector
+==6496== Copyright (C) 2002-2015, and GNU GPL'd, by Julian Seward et al.
+==6496== Using Valgrind-3.12.0 and LibVEX; rerun with -h for copyright info
+==6496== Command: ./valgrind_test_1
+==6496== 
+==6496== Invalid write of size 4
+==6496==    at 0x40054B: f (valgrind_test_1.c:6)
+==6496==    by 0x40055B: main (valgrind_test_1.c:12)
+==6496==  Address 0x51fb068 is 0 bytes after a block of size 40 alloc'd
+==6496==    at 0x4C2ABE3: malloc (vg_replace_malloc.c:299)
+==6496==    by 0x40053E: f (valgrind_test_1.c:5)
+==6496==    by 0x40055B: main (valgrind_test_1.c:12)
+==6496== 
+==6496== 
+==6496== HEAP SUMMARY:
+==6496==     in use at exit: 40 bytes in 1 blocks
+==6496==   total heap usage: 1 allocs, 0 frees, 40 bytes allocated
+==6496== 
+==6496== 40 bytes in 1 blocks are definitely lost in loss record 1 of 1
+==6496==    at 0x4C2ABE3: malloc (vg_replace_malloc.c:299)
+==6496==    by 0x40053E: f (valgrind_test_1.c:5)
+==6496==    by 0x40055B: main (valgrind_test_1.c:12)
+==6496== 
+==6496== LEAK SUMMARY:
+==6496==    definitely lost: 40 bytes in 1 blocks
+==6496==    indirectly lost: 0 bytes in 0 blocks
+==6496==      possibly lost: 0 bytes in 0 blocks
+==6496==    still reachable: 0 bytes in 0 blocks
+==6496==         suppressed: 0 bytes in 0 blocks
+==6496== 
+==6496== For counts of detected and suppressed errors, rerun with: -v
+==6496== ERROR SUMMARY: 2 errors from 2 contexts (suppressed: 0 from 0)
+------------------------------------------------------------------------------
+                                          Usage2: valgrind_test_2.c--->Memory Leak Check
+                                                  ------------------
+-Compile valgrind_test_2.c with -g option to enable debugging option.
+--g option of gcc, which adds debugging symbols. we can find out which line contains the malloc function which needs to call the free()
+ function.
+
+rakesh@rakesh-desktop:~/C_examples/valgrind_test$ cat valgrind_test_2.c 
+#include<stdio.h>
+#include<stdlib.h>
+int main()
+{
+    char *x=(char *)malloc(100);
+    return 0;
+}
+rakesh@rakesh-desktop:~/C_examples/valgrind_test$ gcc -g valgrind_test_2.c -o valgrind_test_2
+rakesh@rakesh-desktop:~/C_examples/valgrind_test$ valgrind --tool=memcheck --leak-check=yes ./valgrind_test_2
+==6608== Memcheck, a memory error detector
+==6608== Copyright (C) 2002-2015, and GNU GPL'd, by Julian Seward et al.
+==6608== Using Valgrind-3.12.0 and LibVEX; rerun with -h for copyright info
+==6608== Command: ./valgrind_test_2
+==6608== 
+==6608== 
+==6608== HEAP SUMMARY:
+==6608==     in use at exit: 100 bytes in 1 blocks
+==6608==   total heap usage: 1 allocs, 0 frees, 100 bytes allocated
+==6608== 
+==6608== 100 bytes in 1 blocks are definitely lost in loss record 1 of 1
+==6608==    at 0x4C2ABE3: malloc (vg_replace_malloc.c:299)
+==6608==    by 0x40053E: main (valgrind_test_2.c:5)
+==6608== 
+==6608== LEAK SUMMARY:
+==6608==    definitely lost: 100 bytes in 1 blocks
+==6608==    indirectly lost: 0 bytes in 0 blocks
+==6608==      possibly lost: 0 bytes in 0 blocks
+==6608==    still reachable: 0 bytes in 0 blocks
+==6608==         suppressed: 0 bytes in 0 blocks
+==6608== 
+==6608== For counts of detected and suppressed errors, rerun with: -v
+==6608== ERROR SUMMARY: 1 errors from 1 contexts (suppressed: 0 from 0)
+----------------------------------------------------------------------------
+                                        Usage3:   valgrind_test_3.c ---Finding Invalid Pointer
+                                                  -----------------
+
+
+rakesh@rakesh-desktop:~/C_examples/valgrind_test$ cat valgrind_test_3.c 
+#include<stdio.h>
+#include<stdlib.h>
+int main()
+{
+    char *x=(char *)malloc(10*sizeof(char));
+    x[10]='b';
+    return 0;
+}
+rakesh@rakesh-desktop:~/C_examples/valgrind_test$ gcc -g valgrind_test_3.c -o valgrind_test_3
+rakesh@rakesh-desktop:~/C_examples/valgrind_test$ valgrind --tool=memcheck --leak-check=yes ./valgrind_test_3
+==7017== Memcheck, a memory error detector
+==7017== Copyright (C) 2002-2015, and GNU GPL'd, by Julian Seward et al.
+==7017== Using Valgrind-3.12.0 and LibVEX; rerun with -h for copyright info
+==7017== Command: ./valgrind_test_3
+==7017== 
+==7017== Invalid write of size 1---------------------------------------------------                           ----------------------
+==7017==    at 0x40054B: main (valgrind_test_3.c:6)--------------------------                                     ------------------
+==7017==  Address 0x51fb04a is 0 bytes after a block of size 10 alloc'd-----        real invalid pointer message          ----------
+==7017==    at 0x4C2ABE3: malloc (vg_replace_malloc.c:299)-------------------                                     ------------------  
+==7017==    by 0x40053E: main (valgrind_test_3.c:5)-------------------------------                             ---------------------
+==7017== 
+==7017== 
+==7017== HEAP SUMMARY:
+==7017==     in use at exit: 10 bytes in 1 blocks
+==7017==   total heap usage: 1 allocs, 0 frees, 10 bytes allocated
+==7017== 
+==7017== 10 bytes in 1 blocks are definitely lost in loss record 1 of 1
+==7017==    at 0x4C2ABE3: malloc (vg_replace_malloc.c:299)
+==7017==    by 0x40053E: main (valgrind_test_3.c:5)
+==7017== 
+==7017== LEAK SUMMARY:
+==7017==    definitely lost: 10 bytes in 1 blocks
+==7017==    indirectly lost: 0 bytes in 0 blocks
+==7017==      possibly lost: 0 bytes in 0 blocks
+==7017==    still reachable: 0 bytes in 0 blocks
+==7017==         suppressed: 0 bytes in 0 blocks
+==7017== 
+==7017== For counts of detected and suppressed errors, rerun with: -v
+==7017== ERROR SUMMARY: 2 errors from 2 contexts (suppressed: 0 from 0)
+------------------------------------------------------------------------------------
+                                            Usage4:  valgrind_test_3.c ---Detecting The Use Of Uninitialized Variables
+                                                     -----------------
+ 
+rakesh@rakesh-desktop:~/C_examples/valgrind_test$ cat valgrind_test_4.c 
+#include <stdio.h>
+
+int main()
+{
+    int x;
+    if(x == 0)
+    {
+        printf("X is zero"); /* replace with cout and include 
+                                iostream for C++ */
+    }
+    return 0;
+}
+rakesh@rakesh-desktop:~/C_examples/valgrind_test$ gcc -g valgrind_test_4.c -o valgrind_test_4
+rakesh@rakesh-desktop:~/C_examples/valgrind_test$ valgrind --tool=memcheck --leak-check=yes valgrind_test_4
+valgrind: valgrind_test_4: command not found
+rakesh@rakesh-desktop:~/C_examples/valgrind_test$ valgrind --tool=memcheck --leak-check=yes ./valgrind_test_4
+==7168== Memcheck, a memory error detector
+==7168== Copyright (C) 2002-2015, and GNU GPL'd, by Julian Seward et al.
+==7168== Using Valgrind-3.12.0 and LibVEX; rerun with -h for copyright info
+==7168== Command: ./valgrind_test_4
+==7168== 
+==7168== Conditional jump or move depends on uninitialised value(s)
+==7168==    at 0x400539: main (valgrind_test_4.c:6)
+==7168== 
+X is zero==7168== 
+==7168== HEAP SUMMARY:
+==7168==     in use at exit: 0 bytes in 0 blocks
+==7168==   total heap usage: 0 allocs, 0 frees, 0 bytes allocated
+==7168== 
+==7168== All heap blocks were freed -- no leaks are possible
+==7168== 
+==7168== For counts of detected and suppressed errors, rerun with: -v
+==7168== Use --track-origins=yes to see where uninitialised values come from
+==7168== ERROR SUMMARY: 1 errors from 1 contexts (suppressed: 0 from 0)
+
+-----------------------------------------------------------------------------------
